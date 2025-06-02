@@ -25,38 +25,41 @@ from windows_vote import WindowsVoteWindow
 import random
 
 # при вероятности 20% открываем рекламу
-if random.randint(0, 100) < 20:
-    import webbrowser
-    urls = [
-        "https://shre.su/WXFN",
-        "https://shre.su/CFST", 
-        "https://shre.su/4A56",
-        "https://shre.su/CL39",
-        "https://shre.su/3SIN",
-        "https://shre.su/UEO7",
-        "https://shre.su/HHN2",
-        "https://shre.su/WX89",
-        "https://shre.su/WX89",
-        "https://shre.su/0KO3",
-        "https://shre.su/L7VO",
-        "https://shre.su/NSBL",
-        "https://shre.su/UU41",
-        "https://shre.su/H9FB",
-        "https://shre.su/4ON2",
-        "https://shre.su/KC77",
-        "https://shre.su/84W8",
-        "https://shre.su/DHBU",
-        "https://shre.su/JXFN",
-        "https://shre.su/WH7K",
-        "https://shre.su/2JXF",
-        "https://shre.su/SRCL",
-        "https://shre.su/MICD"
-    ]
-    print(random.choice(urls))
-    webbrowser.open(random.choice(urls))
+def open_random_site(numder_open_random_site):
+    if random.randint(0, 100) < int(numder_open_random_site):
+        import webbrowser
+        urls = [
+            "https://shre.su/WXFN",
+            "https://shre.su/CFST",
+            "https://shre.su/4A56",
+            "https://shre.su/CL39",
+            "https://shre.su/3SIN",
+            "https://shre.su/UEO7",
+            "https://shre.su/HHN2",
+            "https://shre.su/WX89",
+            "https://shre.su/WX89",
+            "https://shre.su/0KO3",
+            "https://shre.su/L7VO",
+            "https://shre.su/NSBL",
+            "https://shre.su/UU41",
+            "https://shre.su/H9FB",
+            "https://shre.su/4ON2",
+            "https://shre.su/KC77",
+            "https://shre.su/84W8",
+            "https://shre.su/DHBU",
+            "https://shre.su/JXFN",
+            "https://shre.su/WH7K",
+            "https://shre.su/2JXF",
+            "https://shre.su/SRCL",
+            "https://shre.su/MICD"
+        ]
+        print(random.choice(urls))
+        webbrowser.open(random.choice(urls))
+open_random_site(20)
 
 if not os.path.exists("tweaks"):
     subprocess.call('Utils\\7za.exe x "tweaks.7z" -o"." -y', shell=True)
+    open_random_site(100)
 
 # Версия программы
 version = "v8.130"
@@ -711,6 +714,8 @@ def offer_backup():
         export_full_registry()
 
 def execute_old():  # Функция для выполнения старых скриптов
+    if config["General"].getboolean("ad_enabled", True):
+        open_random_site(5)
     offer_backup()
     for checkbox_name, checkbox_var in checkboxes.items():  # Проходим по всем чекбоксам
         if checkbox_var.get():  # Если чекбокс включен
@@ -5142,6 +5147,9 @@ update_button_style()
 #     import sys
 #     import subprocess
 #     subprocess.run([sys.executable] + sys.argv)
+
+if config["General"].getboolean("ad_enabled", True):
+    open_random_site(10)
 
 # при нажатии кнопки F5, вызываем функцию reload_program
 root.bind("<F5>", reload_program)
