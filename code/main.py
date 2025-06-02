@@ -23,6 +23,9 @@ from pathlib import Path
 import backup_tab
 from windows_vote import WindowsVoteWindow
 
+if not os.path.exists("tweaks"):
+    subprocess.call('Utils\\7za.exe x "tweaks.7z" -o"." -y', shell=True)
+
 # Версия программы
 version = "v8.129"
 
