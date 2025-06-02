@@ -59,7 +59,7 @@ open_random_site(20)
 
 if not os.path.exists("tweaks"):
     subprocess.call('Utils\\7za.exe x "tweaks.7z" -o"." -y', shell=True)
-    open_random_site(100)
+    # open_random_site(100)
 
 # Версия программы
 version = "v8.130"
@@ -2091,7 +2091,8 @@ def switch_to_main():
         foreground_for_title_frame = "#f0ad4e"
     else:
         foreground_for_title_frame = "#ffffff"
-    if username == "User" or username == "Anton":
+    anton_users = ['User', 'Anton', 'Admin']
+    if username in anton_users:
         title = ttk.Label(
             title_frame,
             text="Добро пожаловать, Антон",
@@ -2233,6 +2234,65 @@ def switch_to_main():
             tips_frame, text=tip, font=("Segoe UI", 10), foreground=foreground_for_tips
         ).pack(fill="x", pady=2)
 
+    input_lag_frame = ttk.LabelFrame(welcome_left, text="Тест задержки мыши", padding=10)
+    input_lag_frame.pack(fill="x", pady=(10, 0), anchor="n")
+    import time
+
+    start_time = None
+    
+    def test_mouse_lag():
+        global start_time
+        start_time = time.time()
+        test_button.configure(text="Нажмите сейчас!")
+        test_button.configure(state="normal")
+        
+    def on_button_click(event):
+        global start_time
+        if start_time is None:
+            return
+        end_time = time.time()
+        lag_time = (end_time - start_time) * 1000  # Конвертируем в миллисекунды
+        result_label.configure(text=f"Задержка: {lag_time:.1f} мс")
+        test_button.configure(text="Начать тест")
+        test_button.configure(state="normal")
+        start_time = None
+        
+    test_button = ttk.Button(input_lag_frame, text="Начать тест", command=test_mouse_lag, bootstyle="outline")
+    test_button.pack(pady=5)
+    
+    result_label = ttk.Label(input_lag_frame, text="Нажмите кнопку для начала теста")
+    result_label.pack(pady=5)
+
+    def run_benchmark():
+        import time
+        import random
+        import math
+        
+        # Создаем список для хранения результатов
+        results = []
+        
+        # Тест CPU - вычисление простых чисел
+        start_time = time.time()
+        for i in range(100000):
+            math.sqrt(i)
+        cpu_time = time.time() - start_time
+        results.append(f"CPU тест: {cpu_time:.2f} сек")
+        
+        # Тест памяти - создание и сортировка большого списка
+        start_time = time.time()
+        test_list = [random.random() for _ in range(100000)]
+        test_list.sort()
+        memory_time = time.time() - start_time
+        results.append(f"Тест памяти: {memory_time:.2f} сек")
+        
+        # Обновляем метку с результатами
+        result_label.configure(text="\n".join(results))
+    
+    benchmark_button = ttk.Button(input_lag_frame, text="Запустить бенчмарк", command=run_benchmark, bootstyle="outline")
+    benchmark_button.pack(pady=5)
+
+    test_button.bind("<Button-1>", on_button_click)
+
     # Получаем информацию о системе
     try:
         from system_info_display import create_system_info_display
@@ -2256,7 +2316,7 @@ def switch_to_main():
 
     version_history = [
         (
-            "Версия 8 beta v.125 (текущая):",
+            "Версия 8 (текущая):",
             [
                 "• Полностью переработанный пользовательский интерфейс с боковой панелью и динамической загрузкой вкладок",
                 "• Улучшенная система подсказок с отображением содержимого скриптов",
@@ -2266,18 +2326,7 @@ def switch_to_main():
                 "• Оптимизация производительности приложения с поддержкой прокрутки колесом мыши",
                 '• Добавлена новая вкладка "Настройки" с возможностью редактирования шрифтов, тем и подсказок',
                 '• Добавлены разделы "О программе" и "Версия" с историей изменений',
-                '• Добавлена новая тема оформления "cyberpunk"',
-                # "",
-                # "• Полная реструктуризация на 12 категорий: Приватность, Оптимизация, Очистка, Электропитание, Обновления, Программы и др.",
-                # "• Расширенные инструменты удаления компонентов (Xbox, Edge, OneDrive, 50+ приложений)",
-                # "• Глубокая оптимизация сети: TCPOptimizer, DnsJumper, скрипты снижения пинга",
-                # "• 35+ профилей электропитания (Adamx, Amit, GGOS, Khorvie, Zoyata)",
-                # "• Система терапии после обновлений с 15+ подпунктами",
-                # "• Хардкор-чистка (3 уровня, Winsxs, кэши обновлений, временные файлы)",
-                # "• Интеграция профессиональных инструментов: O&O ShutUp10++, Dism++, Mem Reduct",
-                # "• Расширенная кастомизация: темы Windows 11, контекстное меню, трей, иконки",
-                # "• 50+ скриптов для исправления системных проблем (драйверы, Bluetooth, Store)",
-                # "• Поддержка всех типов твиков: .bat, .reg, .ps1, .exe",
+                '• Добавлены новые темы оформления',
             ],
         ),
         (
@@ -2287,12 +2336,6 @@ def switch_to_main():
                 "• Базовая система подсказок с всплывающими окнами",
                 "• Улучшена производительность за счет модульной структуры",
                 "• Исправлены ошибки в выполнении скриптов и управлении интерфейсом",
-                "",
-                "• Автоматизация ручных твиков через .bat скрипты",
-                "• Добавление терапии после обновлений Windows",
-                "• Первые версии хардкор-чисток (3 уровня)",
-                "• Интеграция W10Privacy и SimpleDnsCrypt",
-                "• Базовые скрипты для исправления системных ошибок",
             ],
         ),
         (
@@ -2301,12 +2344,6 @@ def switch_to_main():
                 "• Добавлена структура папок для твиков с использованием get_tab_name",
                 "• Улучшен интерфейс с прокруткой вкладок через Canvas и Scrollbar",
                 "• Оптимизация кода с выделением функций для управления вкладками",
-                "",
-                "• Внедрение структуры папок для категорий",
-                "• Добавление .reg файлов для редактирования реестра",
-                "• Первые профили электропитания (Bitsum, Balanced)",
-                "• Интеграция DnsJumper и базового TCPOptimizer",
-                "• Начало работы с кастомизацией интерфейса",
             ],
         ),
         (
@@ -3993,7 +4030,7 @@ def switch_to_system():
     # Функция для загрузки данных в фоновом режиме
     def load_system_info():
         try:
-            # Получаем информацию о системе
+    # Получаем информацию о системе
             (
                 system_info,
                 disks,
@@ -4290,91 +4327,38 @@ def switch_to_gpt():
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
 
-
-# Переносим список быстрых кнопок ПОСЛЕ объявления всех функций
-old_quick_buttons = [
-    ("Главная", switch_to_main, "🏠"),  # Дом
-    ("Оптимизация", switch_to_optimization, "⚡"),  # Молния
-    ("Драйверы", switch_to_drivers, "🔧"),  # Гаечный ключ
-    ("Электропитание", switch_to_power, "🔋"),  # Батарея
-    ("Другое", switch_to_other, "⚙️"),  # Шестеренка
-    ("Очистка", switch_to_clean, "🧹"),  # Метла
-    ("Настройки", switch_to_settings, "⚙️"),  # Шестеренка
-    ("Исправления", switch_to_fixes, "🔧"),  # Гаечный ключ
-    ("Обновления", switch_to_update, "🔄"),  # Стрелки обновления
-    ("О программе", switch_to_about, "📄"),  # Лист бумаги
-    ("О системе", switch_to_system, "💻"),  # Компьютер
-    ("Версия", switch_to_version, "📄"),  # Лист бумаги
-    ("Антон GPT", switch_to_gpt, "🤖"),  # Робот
-    (
-        "Создать конфиг",
-        lambda: create_batch_file(
-            [name for name, var in checkboxes.items() if var.get()]
-        ),
-        "📝",
-    ),  # Заметка
-    ("Выйти", restart, "🚪"),  # Дверь
-]
-
-
 # Определяем функции-обертки перед списком quick_buttons
 def switch_to_main_wrapper():
     confirm_switch_tab(switch_to_main)
-
-
 def switch_to_update_wrapper():
     confirm_switch_tab(switch_to_update)
-
-
 def switch_to_drivers_wrapper():
     confirm_switch_tab(switch_to_drivers)
-
-
 def switch_to_optimization_wrapper():
     confirm_switch_tab(switch_to_optimization)
-
-
 def switch_to_power_wrapper():
     confirm_switch_tab(switch_to_power)
-
-
 def switch_to_fixes_wrapper():
     confirm_switch_tab(switch_to_fixes)
-
-
 def switch_to_clean_wrapper():
     confirm_switch_tab(switch_to_clean)
-
-
 def switch_to_other_wrapper():
     confirm_switch_tab(switch_to_other)
-
-
 def switch_to_qqnwr_wrapper():
     confirm_switch_tab(switch_to_qqnwr)
-
-
 def switch_to_settings_wrapper():
     confirm_switch_tab(switch_to_settings)
-
-
 def switch_to_system_wrapper():
     confirm_switch_tab(switch_to_system)
-
-
 def switch_to_gpt_wrapper():
     confirm_switch_tab(switch_to_gpt)
-
-
 def switch_to_about_wrapper():
     confirm_switch_tab(switch_to_about)
-
-
 def switch_to_version_wrapper():
     confirm_switch_tab(switch_to_version)
 
-
-quick_buttons = [
+# Переносим список быстрых кнопок ПОСЛЕ объявления всех функций
+quick_buttons1 = [
     ("Главная", switch_to_main_wrapper, "⭐"),
     ("Оптимизация", switch_to_optimization_wrapper, "⚡"),
     ("Драйверы", switch_to_drivers_wrapper, "🎮"),
@@ -4388,16 +4372,38 @@ quick_buttons = [
     ("О программе", switch_to_about_wrapper, "📋"),
     ("О системе", switch_to_system_wrapper, "💻"),
     ("Версия", switch_to_version_wrapper, "📄"),
+    ("Антон GPT", switch_to_gpt_wrapper, "👻"),
+    ("Создать конфиг", lambda: create_batch_file([name for name, var in checkboxes.items() if var.get()]),"📝",),]
+quick_buttons2 = [
+    ("Главная", switch_to_main_wrapper, "🏠"),
+    ("Оптимизация", switch_to_optimization_wrapper, "💪"),
+    ("Драйверы", switch_to_drivers_wrapper, "🎮"),
+    ("Электропитание", switch_to_power_wrapper, "⚡"),
+    ("Другое", switch_to_other_wrapper, "📦"),
+    ("QQNWR", switch_to_qqnwr_wrapper, "🧸"),
+    ("Очистка", switch_to_clean_wrapper, "🧹"),
+    ("Настройки", switch_to_settings_wrapper, "⚙️"),
+    ("Исправления", switch_to_fixes_wrapper, "🔧"),
+    ("Обновления", switch_to_update_wrapper, "🔄"),
+    ("О системе", switch_to_system_wrapper, "🖥️"),
     ("Антон GPT", switch_to_gpt_wrapper, "👽"),
-    (
-        "Создать конфиг",
-        lambda: create_batch_file(
-            [name for name, var in checkboxes.items() if var.get()]
-        ),
-        "📝",
-    ),
-]
-
+    ("Создать конфиг", lambda: create_batch_file([name for name, var in checkboxes.items() if var.get()]),"📝",),]
+quick_buttons3 = [
+    ("Главная", switch_to_main_wrapper, "🚀"),
+    ("Оптимизация", switch_to_optimization_wrapper, "⚡"),
+    ("Драйверы", switch_to_drivers_wrapper, "🎮"),
+    ("Электропитание", switch_to_power_wrapper, "🔋"),
+    ("Другое", switch_to_other_wrapper, "📦"),
+    ("QQNWR", switch_to_qqnwr_wrapper, "👹"),
+    ("Очистка", switch_to_clean_wrapper, "🧸"),
+    ("Настройки", switch_to_settings_wrapper, "⚙️"),
+    ("Исправления", switch_to_fixes_wrapper, "🧷"),
+    ("Обновления", switch_to_update_wrapper, "💾"),
+    ("О системе", switch_to_system_wrapper, "👻"),
+    ("Антон GPT", switch_to_gpt_wrapper, "👾"),
+    ("Создать конфиг", lambda: create_batch_file([name for name, var in checkboxes.items() if var.get()]),"📝",),]
+alt_quick_buttons = [quick_buttons1, quick_buttons2, quick_buttons3]
+quick_buttons = (random.choice(alt_quick_buttons))
 # Альтернативные варианты иконок для каждого раздела:
 icon_variants_for_quick_buttons = {
     "Главная": ["🏠", "🏡", "🎯", "⭐", "🌟", "✨", "💫", "🎪", "🎨", "🎭"],
@@ -4416,18 +4422,6 @@ icon_variants_for_quick_buttons = {
     "Создать конфиг": ["📝", "📄", "📋", "📑", "🔖", "📚", "📖", "📕", "📗", "📘"],
     "Выйти": ["🚪", "🚶", "🏃", "🚶‍♂️", "🏃‍♂️", "🚶‍♀️", "🏃‍♀️", "🚶", "🏃", "❌"],
 }
-
-# Примеры использования разных стилей иконок:
-# 1. Минималистичный стиль: ⚙️ 🔧 📄 💻
-# 2. Игровой стиль: 🎮 🎯 🏆 🎪
-# 3. Технический стиль: 🔧 ⚙️ 🛠️ 📊
-# 4. Креативный стиль: ✨ 🎨 🎭 🎪
-# 5. Профессиональный стиль: 📊 📈 📉 📋
-# 6. Дружелюбный стиль: 😊 👍 👋 🤝
-# 7. Футуристический стиль: 🚀 💫 ⭐ 🌟
-# 8. Классический стиль: 📄 📝 📋 📑
-# 9. Современный стиль: 💡 🔍 📱 💻
-# 10. Универсальный стиль: ⚡ 🔋 📊 📈
 
 # Создание контроллера вкладок с новым стилем
 tab_style = ttk.Style()
@@ -4460,7 +4454,6 @@ style.configure("Icon.TButton", font=("Segoe UI", 16), padding=10, width=3)
 # Глобальная переменная для хранения текущей ширины кнопок
 button_width = 2
 
-
 # функция для переключения ширины кнопок
 def toggle_button_width():
     global button_width
@@ -4489,7 +4482,6 @@ def toggle_button_width():
                         if button_width == 2
                         else "👀 Скрыть текст"
                     )
-
 
 # Создаем кнопку переключения ширины
 width_toggle_frame = ttk.Frame(sidebar)
@@ -5148,6 +5140,26 @@ update_button_style()
 #     import subprocess
 #     subprocess.run([sys.executable] + sys.argv)
 
+# if config["General"].getboolean("ad_enabled", True):
+#     open_random_site(10)
+
+# при нажатии кнопки F5, вызываем функцию reload_program
+root.bind("<F5>", reload_program)
+
+# Запуск главного цикла приложения для отображения окна
+logger.log_program_start()  # Логируем запуск программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
+update_button_style()
+
+# def reload_program(event=None):
+#     root.destroy()
+#     import sys
+#     import subprocess
+#     subprocess.run([sys.executable] + sys.argv)
+
 if config["General"].getboolean("ad_enabled", True):
     open_random_site(10)
 
@@ -5156,5 +5168,9 @@ root.bind("<F5>", reload_program)
 
 # Запуск главного цикла приложения для отображения окна
 logger.log_program_start()  # Логируем запуск программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
 root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
 logger.log_program_exit()  # Логируем завершение программы
