@@ -22,6 +22,38 @@ from gpt import GPTClient  # Импортируем GPTClient
 from pathlib import Path
 import backup_tab
 from windows_vote import WindowsVoteWindow
+import random
+
+# при вероятности 20% открываем рекламу
+if random.randint(0, 100) < 20:
+    import webbrowser
+    urls = [
+        "https://shre.su/WXFN",
+        "https://shre.su/CFST", 
+        "https://shre.su/4A56",
+        "https://shre.su/CL39",
+        "https://shre.su/3SIN",
+        "https://shre.su/UEO7",
+        "https://shre.su/HHN2",
+        "https://shre.su/WX89",
+        "https://shre.su/WX89",
+        "https://shre.su/0KO3",
+        "https://shre.su/L7VO",
+        "https://shre.su/NSBL",
+        "https://shre.su/UU41",
+        "https://shre.su/H9FB",
+        "https://shre.su/4ON2",
+        "https://shre.su/KC77",
+        "https://shre.su/84W8",
+        "https://shre.su/DHBU",
+        "https://shre.su/JXFN",
+        "https://shre.su/WH7K",
+        "https://shre.su/2JXF",
+        "https://shre.su/SRCL",
+        "https://shre.su/MICD"
+    ]
+    print(random.choice(urls))
+    webbrowser.open(random.choice(urls))
 
 if not os.path.exists("tweaks"):
     subprocess.call('Utils\\7za.exe x "tweaks.7z" -o"." -y', shell=True)
