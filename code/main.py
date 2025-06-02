@@ -27,7 +27,7 @@ if not os.path.exists("tweaks"):
     subprocess.call('Utils\\7za.exe x "tweaks.7z" -o"." -y', shell=True)
 
 # Версия программы
-version = "v8.129"
+version = "v8.130"
 
 # Импортируем путь для доступа к модулям
 # Этот код добавляет папку tweaks в путь поиска модулей, чтобы импортировать скрипты из этой директории
@@ -70,7 +70,7 @@ config.read("user_data//settings.ini", encoding="cp1251")  # Чтение в ANS
 # Создаем обязательные секции с настройками по умолчанию
 required_sections = {
     "General": {
-        "theme": "ruslanchik",  # Тема интерфейса
+        "theme": "revi_os",  # Тема интерфейса
         "font_family": "GitHub: scode18",  # Шрифт интерфейса
         "font_size": "9",  # Размер шрифта интерфейса
         "checkbox_font_size": "12",  # Размер шрифта чекбоксов
@@ -669,9 +669,17 @@ def switch_to_select():
 | Функция для выполнения старых скриптов |
 +----------------------------------------+
 """
-
+def offer_backup():
+    """Предлагает пользователю создать бэкап реестра при запуске программы"""
+    if messagebox.askyesno(
+        "Резервное копирование",
+        "Рекомендуется создать резервную копию реестра перед использованием твикера.\n\nСоздать резервную копию сейчас?",
+        icon='warning'
+    ):
+        export_full_registry()
 
 def execute_old():  # Функция для выполнения старых скриптов
+    offer_backup()
     for checkbox_name, checkbox_var in checkboxes.items():  # Проходим по всем чекбоксам
         if checkbox_var.get():  # Если чекбокс включен
             tab_name = get_tab_name(checkbox_name)  # Получаем имя вкладки
