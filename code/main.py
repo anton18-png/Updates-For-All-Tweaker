@@ -22,9 +22,47 @@ from gpt import GPTClient  # Импортируем GPTClient
 from pathlib import Path
 import backup_tab
 from windows_vote import WindowsVoteWindow
+import random
+
+# при вероятности 20% открываем рекламу
+def open_random_site(numder_open_random_site):
+    if random.randint(0, 100) < int(numder_open_random_site):
+        import webbrowser
+        urls = [
+            "https://shre.su/WXFN",
+            "https://shre.su/CFST",
+            "https://shre.su/4A56",
+            "https://shre.su/CL39",
+            "https://shre.su/3SIN",
+            "https://shre.su/UEO7",
+            "https://shre.su/HHN2",
+            "https://shre.su/WX89",
+            "https://shre.su/WX89",
+            "https://shre.su/0KO3",
+            "https://shre.su/L7VO",
+            "https://shre.su/NSBL",
+            "https://shre.su/UU41",
+            "https://shre.su/H9FB",
+            "https://shre.su/4ON2",
+            "https://shre.su/KC77",
+            "https://shre.su/84W8",
+            "https://shre.su/DHBU",
+            "https://shre.su/JXFN",
+            "https://shre.su/WH7K",
+            "https://shre.su/2JXF",
+            "https://shre.su/SRCL",
+            "https://shre.su/MICD"
+        ]
+        print(random.choice(urls))
+        webbrowser.open(random.choice(urls))
+open_random_site(20)
+
+if not os.path.exists("tweaks"):
+    subprocess.call('Utils\\7za.exe x "tweaks.7z" -o"." -y', shell=True)
+    # open_random_site(100)
 
 # Версия программы
-version = "v8.129"
+version = "v8.130"
 
 # Импортируем путь для доступа к модулям
 # Этот код добавляет папку tweaks в путь поиска модулей, чтобы импортировать скрипты из этой директории
@@ -67,7 +105,7 @@ config.read("user_data//settings.ini", encoding="cp1251")  # Чтение в ANS
 # Создаем обязательные секции с настройками по умолчанию
 required_sections = {
     "General": {
-        "theme": "ruslanchik",  # Тема интерфейса
+        "theme": "revi_os",  # Тема интерфейса
         "font_family": "GitHub: scode18",  # Шрифт интерфейса
         "font_size": "9",  # Размер шрифта интерфейса
         "checkbox_font_size": "12",  # Размер шрифта чекбоксов
@@ -666,9 +704,19 @@ def switch_to_select():
 | Функция для выполнения старых скриптов |
 +----------------------------------------+
 """
-
+def offer_backup():
+    """Предлагает пользователю создать бэкап реестра при запуске программы"""
+    if messagebox.askyesno(
+        "Резервное копирование",
+        "Рекомендуется создать резервную копию реестра перед использованием твикера.\n\nСоздать резервную копию сейчас?",
+        icon='warning'
+    ):
+        export_full_registry()
 
 def execute_old():  # Функция для выполнения старых скриптов
+    if config["General"].getboolean("ad_enabled", True):
+        open_random_site(5)
+    offer_backup()
     for checkbox_name, checkbox_var in checkboxes.items():  # Проходим по всем чекбоксам
         if checkbox_var.get():  # Если чекбокс включен
             tab_name = get_tab_name(checkbox_name)  # Получаем имя вкладки
@@ -2043,7 +2091,8 @@ def switch_to_main():
         foreground_for_title_frame = "#f0ad4e"
     else:
         foreground_for_title_frame = "#ffffff"
-    if username == "User" or username == "Anton":
+    anton_users = ['User', 'Anton', 'Admin']
+    if username in anton_users:
         title = ttk.Label(
             title_frame,
             text="Добро пожаловать, Антон",
@@ -2185,6 +2234,194 @@ def switch_to_main():
             tips_frame, text=tip, font=("Segoe UI", 10), foreground=foreground_for_tips
         ).pack(fill="x", pady=2)
 
+    input_lag_frame = ttk.LabelFrame(welcome_left, text="Тест задержки мыши", padding=10)
+    input_lag_frame.pack(fill="x", pady=(10, 0), anchor="n")
+
+    import time
+    import statistics
+
+    # Делаем переменные глобальными
+    global lag_times
+    lag_times = []
+
+    def test_mouse_lag():
+        global lag_times
+        start_time = time.time()
+        # Сразу обновляем интерфейс
+        test_button.configure(text="Тестирование...")
+        result_label.configure(text="Измерение задержки...")
+        # Принудительно обновляем интерфейс
+        input_lag_frame.update()
+        # Замеряем время после обновления
+        end_time = time.time()
+        lag_time = (end_time - start_time) * 1000  # Конвертируем в миллисекунды
+        lag_times.append(lag_time)
+        
+        if len(lag_times) >= 5:
+            avg_lag = statistics.mean(lag_times)
+            min_lag = min(lag_times)
+            max_lag = max(lag_times)
+            result_label.configure(text=f"Средняя задержка: {avg_lag:.1f} мс\nМинимальная: {min_lag:.1f} мс\nМаксимальная: {max_lag:.1f} мс")
+            lag_times = []
+        else:
+            result_label.configure(text=f"Задержка: {lag_time:.1f} мс\nОсталось тестов: {5 - len(lag_times)}")
+            
+        test_button.configure(text="Начать тест")
+        
+    test_button = ttk.Button(input_lag_frame, text="Начать тест", command=test_mouse_lag, bootstyle="outline")
+    test_button.pack(pady=5)
+
+    result_label = ttk.Label(input_lag_frame, text="Нажмите кнопку для начала теста")
+    result_label.pack(pady=5)
+
+    # def run_benchmark():
+    #     import time
+    #     import random
+    #     import math
+        
+    #     # Создаем список для хранения результатов
+    #     results = []
+        
+    #     # Тест CPU - вычисление простых чисел
+    #     start_time = time.time()
+    #     for i in range(100000):
+    #         math.sqrt(i)
+    #     cpu_time = time.time() - start_time
+    #     results.append(f"CPU тест: {cpu_time:.2f} сек")
+        
+    #     # Тест памяти - создание и сортировка большого списка
+    #     start_time = time.time()
+    #     test_list = [random.random() for _ in range(100000)]
+    #     test_list.sort()
+    #     memory_time = time.time() - start_time
+    #     results.append(f"Тест памяти: {memory_time:.2f} сек")
+        
+    #     # Обновляем метку с результатами
+    #     result_label.configure(text="\n".join(results))
+    
+    # benchmark_button = ttk.Button(input_lag_frame, text="Запустить бенчмарк", command=run_benchmark, bootstyle="outline")
+    # benchmark_button.pack(pady=5)
+
+    def run_benchmark():
+        import time
+        import random
+        import math
+        import psutil
+        import platform
+        import numpy as np
+        from concurrent.futures import ThreadPoolExecutor
+        import tkinter as tk
+        from tkinter import ttk
+        
+        # Создаем новое окно для результатов
+        benchmark_window = tk.Toplevel()
+        benchmark_window.title("Результаты бенчмарка")
+        benchmark_window.geometry("600x400")
+        
+        # Создаем фрейм с прокруткой
+        main_frame = ttk.Frame(benchmark_window)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Создаем текстовое поле с прокруткой
+        text_widget = tk.Text(main_frame, wrap=tk.WORD, font=("Consolas", 10))
+        scrollbar = ttk.Scrollbar(main_frame, orient=tk.VERTICAL, command=text_widget.yview)
+        text_widget.configure(yscrollcommand=scrollbar.set)
+        
+        # Размещаем элементы
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        
+        # Кнопка сохранения результатов
+        def save_results():
+            try:
+                with open("benchmark_results.txt", "w", encoding="utf-8") as f:
+                    f.write(text_widget.get("1.0", tk.END))
+                text_widget.insert(tk.END, "\n\nРезультаты сохранены в файл benchmark_results.txt")
+            except Exception as e:
+                text_widget.insert(tk.END, f"\n\nОшибка при сохранении: {e}")
+        
+        save_button = ttk.Button(benchmark_window, text="Сохранить результаты", command=save_results)
+        save_button.pack(pady=5)
+        
+        # Функция для добавления текста в окно
+        def append_text(text):
+            text_widget.insert(tk.END, text + "\n")
+            text_widget.see(tk.END)  # Прокрутка к последней строке
+            benchmark_window.update()  # Обновление окна
+        
+        # Получаем информацию о системе
+        append_text("=== Информация о системе ===")
+        append_text(f"Процессор: {platform.processor()}")
+        append_text(f"Ядер: {psutil.cpu_count(logical=True)}")
+        append_text(f"Оперативная память: {psutil.virtual_memory().total / (1024**3):.1f} ГБ")
+        append_text("")
+        
+        # Тест CPU - вычисление простых чисел (однопоточный)
+        append_text("=== Тест CPU (однопоточный) ===")
+        start_time = time.time()
+        for i in range(1000000):
+            math.sqrt(i)
+        cpu_time = time.time() - start_time
+        append_text(f"Вычисление квадратных корней: {cpu_time:.2f} сек")
+        
+        # Тест CPU - многопоточные вычисления
+        append_text("\n=== Тест CPU (многопоточный) ===")
+        def cpu_work():
+            return sum(math.sqrt(i) for i in range(100000))
+        
+        start_time = time.time()
+        with ThreadPoolExecutor(max_workers=psutil.cpu_count()) as executor:
+            list(executor.map(lambda _: cpu_work(), range(psutil.cpu_count())))
+        multi_cpu_time = time.time() - start_time
+        append_text(f"Многопоточные вычисления: {multi_cpu_time:.2f} сек")
+        
+        # Тест памяти
+        append_text("\n=== Тест памяти ===")
+        # Тест на запись
+        start_time = time.time()
+        test_array = np.random.random(10000000)
+        write_time = time.time() - start_time
+        append_text(f"Запись массива (10M элементов): {write_time:.2f} сек")
+        
+        # Тест на чтение
+        start_time = time.time()
+        _ = test_array.sum()
+        read_time = time.time() - start_time
+        append_text(f"Чтение массива: {read_time:.2f} сек")
+        
+        # Тест на сортировку
+        start_time = time.time()
+        np.sort(test_array)
+        sort_time = time.time() - start_time
+        append_text(f"Сортировка массива: {sort_time:.2f} сек")
+        
+        # Тест на копирование
+        start_time = time.time()
+        _ = test_array.copy()
+        copy_time = time.time() - start_time
+        append_text(f"Копирование массива: {copy_time:.2f} сек")
+        
+        # Тест на многопоточную обработку
+        append_text("\n=== Тест многопоточной обработки ===")
+        def process_chunk(chunk):
+            return np.sum(chunk)
+        
+        start_time = time.time()
+        chunk_size = len(test_array) // psutil.cpu_count()
+        chunks = [test_array[i:i + chunk_size] for i in range(0, len(test_array), chunk_size)]
+        with ThreadPoolExecutor(max_workers=psutil.cpu_count()) as executor:
+            list(executor.map(process_chunk, chunks))
+        parallel_time = time.time() - start_time
+        append_text(f"Многопоточная обработка: {parallel_time:.2f} сек")
+        
+        # Делаем окно модальным
+        benchmark_window.transient(benchmark_window.master)
+        benchmark_window.grab_set()
+        benchmark_window.wait_window()
+
+    benchmark_button = ttk.Button(input_lag_frame, text="Запустить бенчмарк", command=run_benchmark, bootstyle="outline")
+    benchmark_button.pack(pady=5)
+
     # Получаем информацию о системе
     try:
         from system_info_display import create_system_info_display
@@ -2208,7 +2445,7 @@ def switch_to_main():
 
     version_history = [
         (
-            "Версия 8 beta v.125 (текущая):",
+            "Версия 8 (текущая):",
             [
                 "• Полностью переработанный пользовательский интерфейс с боковой панелью и динамической загрузкой вкладок",
                 "• Улучшенная система подсказок с отображением содержимого скриптов",
@@ -2218,18 +2455,7 @@ def switch_to_main():
                 "• Оптимизация производительности приложения с поддержкой прокрутки колесом мыши",
                 '• Добавлена новая вкладка "Настройки" с возможностью редактирования шрифтов, тем и подсказок',
                 '• Добавлены разделы "О программе" и "Версия" с историей изменений',
-                '• Добавлена новая тема оформления "cyberpunk"',
-                # "",
-                # "• Полная реструктуризация на 12 категорий: Приватность, Оптимизация, Очистка, Электропитание, Обновления, Программы и др.",
-                # "• Расширенные инструменты удаления компонентов (Xbox, Edge, OneDrive, 50+ приложений)",
-                # "• Глубокая оптимизация сети: TCPOptimizer, DnsJumper, скрипты снижения пинга",
-                # "• 35+ профилей электропитания (Adamx, Amit, GGOS, Khorvie, Zoyata)",
-                # "• Система терапии после обновлений с 15+ подпунктами",
-                # "• Хардкор-чистка (3 уровня, Winsxs, кэши обновлений, временные файлы)",
-                # "• Интеграция профессиональных инструментов: O&O ShutUp10++, Dism++, Mem Reduct",
-                # "• Расширенная кастомизация: темы Windows 11, контекстное меню, трей, иконки",
-                # "• 50+ скриптов для исправления системных проблем (драйверы, Bluetooth, Store)",
-                # "• Поддержка всех типов твиков: .bat, .reg, .ps1, .exe",
+                '• Добавлены новые темы оформления',
             ],
         ),
         (
@@ -2239,12 +2465,6 @@ def switch_to_main():
                 "• Базовая система подсказок с всплывающими окнами",
                 "• Улучшена производительность за счет модульной структуры",
                 "• Исправлены ошибки в выполнении скриптов и управлении интерфейсом",
-                "",
-                "• Автоматизация ручных твиков через .bat скрипты",
-                "• Добавление терапии после обновлений Windows",
-                "• Первые версии хардкор-чисток (3 уровня)",
-                "• Интеграция W10Privacy и SimpleDnsCrypt",
-                "• Базовые скрипты для исправления системных ошибок",
             ],
         ),
         (
@@ -2253,12 +2473,6 @@ def switch_to_main():
                 "• Добавлена структура папок для твиков с использованием get_tab_name",
                 "• Улучшен интерфейс с прокруткой вкладок через Canvas и Scrollbar",
                 "• Оптимизация кода с выделением функций для управления вкладками",
-                "",
-                "• Внедрение структуры папок для категорий",
-                "• Добавление .reg файлов для редактирования реестра",
-                "• Первые профили электропитания (Bitsum, Balanced)",
-                "• Интеграция DnsJumper и базового TCPOptimizer",
-                "• Начало работы с кастомизацией интерфейса",
             ],
         ),
         (
@@ -3945,7 +4159,7 @@ def switch_to_system():
     # Функция для загрузки данных в фоновом режиме
     def load_system_info():
         try:
-            # Получаем информацию о системе
+    # Получаем информацию о системе
             (
                 system_info,
                 disks,
@@ -4242,91 +4456,38 @@ def switch_to_gpt():
 
     root.protocol("WM_DELETE_WINDOW", on_closing)
 
-
-# Переносим список быстрых кнопок ПОСЛЕ объявления всех функций
-old_quick_buttons = [
-    ("Главная", switch_to_main, "🏠"),  # Дом
-    ("Оптимизация", switch_to_optimization, "⚡"),  # Молния
-    ("Драйверы", switch_to_drivers, "🔧"),  # Гаечный ключ
-    ("Электропитание", switch_to_power, "🔋"),  # Батарея
-    ("Другое", switch_to_other, "⚙️"),  # Шестеренка
-    ("Очистка", switch_to_clean, "🧹"),  # Метла
-    ("Настройки", switch_to_settings, "⚙️"),  # Шестеренка
-    ("Исправления", switch_to_fixes, "🔧"),  # Гаечный ключ
-    ("Обновления", switch_to_update, "🔄"),  # Стрелки обновления
-    ("О программе", switch_to_about, "📄"),  # Лист бумаги
-    ("О системе", switch_to_system, "💻"),  # Компьютер
-    ("Версия", switch_to_version, "📄"),  # Лист бумаги
-    ("Антон GPT", switch_to_gpt, "🤖"),  # Робот
-    (
-        "Создать конфиг",
-        lambda: create_batch_file(
-            [name for name, var in checkboxes.items() if var.get()]
-        ),
-        "📝",
-    ),  # Заметка
-    ("Выйти", restart, "🚪"),  # Дверь
-]
-
-
 # Определяем функции-обертки перед списком quick_buttons
 def switch_to_main_wrapper():
     confirm_switch_tab(switch_to_main)
-
-
 def switch_to_update_wrapper():
     confirm_switch_tab(switch_to_update)
-
-
 def switch_to_drivers_wrapper():
     confirm_switch_tab(switch_to_drivers)
-
-
 def switch_to_optimization_wrapper():
     confirm_switch_tab(switch_to_optimization)
-
-
 def switch_to_power_wrapper():
     confirm_switch_tab(switch_to_power)
-
-
 def switch_to_fixes_wrapper():
     confirm_switch_tab(switch_to_fixes)
-
-
 def switch_to_clean_wrapper():
     confirm_switch_tab(switch_to_clean)
-
-
 def switch_to_other_wrapper():
     confirm_switch_tab(switch_to_other)
-
-
 def switch_to_qqnwr_wrapper():
     confirm_switch_tab(switch_to_qqnwr)
-
-
 def switch_to_settings_wrapper():
     confirm_switch_tab(switch_to_settings)
-
-
 def switch_to_system_wrapper():
     confirm_switch_tab(switch_to_system)
-
-
 def switch_to_gpt_wrapper():
     confirm_switch_tab(switch_to_gpt)
-
-
 def switch_to_about_wrapper():
     confirm_switch_tab(switch_to_about)
-
-
 def switch_to_version_wrapper():
     confirm_switch_tab(switch_to_version)
 
-
-quick_buttons = [
+# Переносим список быстрых кнопок ПОСЛЕ объявления всех функций
+quick_buttons1 = [
     ("Главная", switch_to_main_wrapper, "⭐"),
     ("Оптимизация", switch_to_optimization_wrapper, "⚡"),
     ("Драйверы", switch_to_drivers_wrapper, "🎮"),
@@ -4340,16 +4501,38 @@ quick_buttons = [
     ("О программе", switch_to_about_wrapper, "📋"),
     ("О системе", switch_to_system_wrapper, "💻"),
     ("Версия", switch_to_version_wrapper, "📄"),
+    ("Антон GPT", switch_to_gpt_wrapper, "👻"),
+    ("Создать конфиг", lambda: create_batch_file([name for name, var in checkboxes.items() if var.get()]),"📝",),]
+quick_buttons2 = [
+    ("Главная", switch_to_main_wrapper, "🏠"),
+    ("Оптимизация", switch_to_optimization_wrapper, "💪"),
+    ("Драйверы", switch_to_drivers_wrapper, "🎮"),
+    ("Электропитание", switch_to_power_wrapper, "⚡"),
+    ("Другое", switch_to_other_wrapper, "📦"),
+    ("QQNWR", switch_to_qqnwr_wrapper, "🧸"),
+    ("Очистка", switch_to_clean_wrapper, "🧹"),
+    ("Настройки", switch_to_settings_wrapper, "⚙️"),
+    ("Исправления", switch_to_fixes_wrapper, "🔧"),
+    ("Обновления", switch_to_update_wrapper, "🔄"),
+    ("О системе", switch_to_system_wrapper, "🖥️"),
     ("Антон GPT", switch_to_gpt_wrapper, "👽"),
-    (
-        "Создать конфиг",
-        lambda: create_batch_file(
-            [name for name, var in checkboxes.items() if var.get()]
-        ),
-        "📝",
-    ),
-]
-
+    ("Создать конфиг", lambda: create_batch_file([name for name, var in checkboxes.items() if var.get()]),"📝",),]
+quick_buttons3 = [
+    ("Главная", switch_to_main_wrapper, "🚀"),
+    ("Оптимизация", switch_to_optimization_wrapper, "⚡"),
+    ("Драйверы", switch_to_drivers_wrapper, "🎮"),
+    ("Электропитание", switch_to_power_wrapper, "🔋"),
+    ("Другое", switch_to_other_wrapper, "📦"),
+    ("QQNWR", switch_to_qqnwr_wrapper, "👹"),
+    ("Очистка", switch_to_clean_wrapper, "🧸"),
+    ("Настройки", switch_to_settings_wrapper, "⚙️"),
+    ("Исправления", switch_to_fixes_wrapper, "🧷"),
+    ("Обновления", switch_to_update_wrapper, "💾"),
+    ("О системе", switch_to_system_wrapper, "👻"),
+    ("Антон GPT", switch_to_gpt_wrapper, "👾"),
+    ("Создать конфиг", lambda: create_batch_file([name for name, var in checkboxes.items() if var.get()]),"📝",),]
+alt_quick_buttons = [quick_buttons1, quick_buttons2, quick_buttons3]
+quick_buttons = (random.choice(alt_quick_buttons))
 # Альтернативные варианты иконок для каждого раздела:
 icon_variants_for_quick_buttons = {
     "Главная": ["🏠", "🏡", "🎯", "⭐", "🌟", "✨", "💫", "🎪", "🎨", "🎭"],
@@ -4368,18 +4551,6 @@ icon_variants_for_quick_buttons = {
     "Создать конфиг": ["📝", "📄", "📋", "📑", "🔖", "📚", "📖", "📕", "📗", "📘"],
     "Выйти": ["🚪", "🚶", "🏃", "🚶‍♂️", "🏃‍♂️", "🚶‍♀️", "🏃‍♀️", "🚶", "🏃", "❌"],
 }
-
-# Примеры использования разных стилей иконок:
-# 1. Минималистичный стиль: ⚙️ 🔧 📄 💻
-# 2. Игровой стиль: 🎮 🎯 🏆 🎪
-# 3. Технический стиль: 🔧 ⚙️ 🛠️ 📊
-# 4. Креативный стиль: ✨ 🎨 🎭 🎪
-# 5. Профессиональный стиль: 📊 📈 📉 📋
-# 6. Дружелюбный стиль: 😊 👍 👋 🤝
-# 7. Футуристический стиль: 🚀 💫 ⭐ 🌟
-# 8. Классический стиль: 📄 📝 📋 📑
-# 9. Современный стиль: 💡 🔍 📱 💻
-# 10. Универсальный стиль: ⚡ 🔋 📊 📈
 
 # Создание контроллера вкладок с новым стилем
 tab_style = ttk.Style()
@@ -4412,7 +4583,6 @@ style.configure("Icon.TButton", font=("Segoe UI", 16), padding=10, width=3)
 # Глобальная переменная для хранения текущей ширины кнопок
 button_width = 2
 
-
 # функция для переключения ширины кнопок
 def toggle_button_width():
     global button_width
@@ -4441,7 +4611,6 @@ def toggle_button_width():
                         if button_width == 2
                         else "👀 Скрыть текст"
                     )
-
 
 # Создаем кнопку переключения ширины
 width_toggle_frame = ttk.Frame(sidebar)
@@ -5100,6 +5269,9 @@ update_button_style()
 #     import subprocess
 #     subprocess.run([sys.executable] + sys.argv)
 
+# if config["General"].getboolean("ad_enabled", True):
+#     open_random_site(10)
+
 # при нажатии кнопки F5, вызываем функцию reload_program
 root.bind("<F5>", reload_program)
 
@@ -5107,3 +5279,6 @@ root.bind("<F5>", reload_program)
 logger.log_program_start()  # Логируем запуск программы
 root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
 logger.log_program_exit()  # Логируем завершение программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
+update_button_style()
