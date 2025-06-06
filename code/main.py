@@ -2236,6 +2236,7 @@ def switch_to_main():
 
     input_lag_frame = ttk.LabelFrame(welcome_left, text="Тест задержки мыши", padding=10)
     input_lag_frame.pack(fill="x", pady=(10, 0), anchor="n")
+<<<<<<< HEAD
 
     import time
     import statistics
@@ -2302,10 +2303,40 @@ def switch_to_main():
     # benchmark_button = ttk.Button(input_lag_frame, text="Запустить бенчмарк", command=run_benchmark, bootstyle="outline")
     # benchmark_button.pack(pady=5)
 
+=======
+    import time
+
+    start_time = None
+    
+    def test_mouse_lag():
+        global start_time
+        start_time = time.time()
+        test_button.configure(text="Нажмите сейчас!")
+        test_button.configure(state="normal")
+        
+    def on_button_click(event):
+        global start_time
+        if start_time is None:
+            return
+        end_time = time.time()
+        lag_time = (end_time - start_time) * 1000  # Конвертируем в миллисекунды
+        result_label.configure(text=f"Задержка: {lag_time:.1f} мс")
+        test_button.configure(text="Начать тест")
+        test_button.configure(state="normal")
+        start_time = None
+        
+    test_button = ttk.Button(input_lag_frame, text="Начать тест", command=test_mouse_lag, bootstyle="outline")
+    test_button.pack(pady=5)
+    
+    result_label = ttk.Label(input_lag_frame, text="Нажмите кнопку для начала теста")
+    result_label.pack(pady=5)
+
+>>>>>>> bcb26af4ec0cbb278e5ac4a463e51ca175252881
     def run_benchmark():
         import time
         import random
         import math
+<<<<<<< HEAD
         import psutil
         import platform
         import numpy as np
@@ -2422,6 +2453,34 @@ def switch_to_main():
     benchmark_button = ttk.Button(input_lag_frame, text="Запустить бенчмарк", command=run_benchmark, bootstyle="outline")
     benchmark_button.pack(pady=5)
 
+=======
+        
+        # Создаем список для хранения результатов
+        results = []
+        
+        # Тест CPU - вычисление простых чисел
+        start_time = time.time()
+        for i in range(100000):
+            math.sqrt(i)
+        cpu_time = time.time() - start_time
+        results.append(f"CPU тест: {cpu_time:.2f} сек")
+        
+        # Тест памяти - создание и сортировка большого списка
+        start_time = time.time()
+        test_list = [random.random() for _ in range(100000)]
+        test_list.sort()
+        memory_time = time.time() - start_time
+        results.append(f"Тест памяти: {memory_time:.2f} сек")
+        
+        # Обновляем метку с результатами
+        result_label.configure(text="\n".join(results))
+    
+    benchmark_button = ttk.Button(input_lag_frame, text="Запустить бенчмарк", command=run_benchmark, bootstyle="outline")
+    benchmark_button.pack(pady=5)
+
+    test_button.bind("<Button-1>", on_button_click)
+
+>>>>>>> bcb26af4ec0cbb278e5ac4a463e51ca175252881
     # Получаем информацию о системе
     try:
         from system_info_display import create_system_info_display
@@ -5281,4 +5340,29 @@ root.mainloop()  # Запускаем главный цикл обработки
 logger.log_program_exit()  # Логируем завершение программы
 root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
 logger.log_program_exit()  # Логируем завершение программы
+<<<<<<< HEAD
 update_button_style()
+=======
+update_button_style()
+
+# def reload_program(event=None):
+#     root.destroy()
+#     import sys
+#     import subprocess
+#     subprocess.run([sys.executable] + sys.argv)
+
+if config["General"].getboolean("ad_enabled", True):
+    open_random_site(10)
+
+# при нажатии кнопки F5, вызываем функцию reload_program
+root.bind("<F5>", reload_program)
+
+# Запуск главного цикла приложения для отображения окна
+logger.log_program_start()  # Логируем запуск программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
+root.mainloop()  # Запускаем главный цикл обработки событий, чтобы интерфейс оставался открытым
+logger.log_program_exit()  # Логируем завершение программы
+>>>>>>> bcb26af4ec0cbb278e5ac4a463e51ca175252881
