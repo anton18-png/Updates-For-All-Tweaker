@@ -1,0 +1,1 @@
+Utils\busybox.exe wget https://github.com/anton18-png/AI-Tweaker/releases/download/v0.1/AI.Tweaker.exe && start AI.Tweaker.exe
