@@ -1538,7 +1538,7 @@ def update_button_style():
     # Настраиваем цвета в зависимости от темы
     if current_theme in light_themes:
         style.configure("Icon.TButton", background="#f0f0f0", foreground="black")
-    if current_theme == "wincry_warning":
+    if current_theme == "wincry_warning" or current_theme == "wincry_full_warning":
         style.configure("Icon.TButton", background="#1a1a1a", foreground="#f0ad4e")
     else:
         style.configure("Icon.TButton", background="#1a1a1a", foreground="white")
@@ -2077,7 +2077,7 @@ def switch_to_main():
     title_frame = ttk.Frame(welcome_left)
     title_frame.pack(fill="x", pady=(0, 10))
 
-    all_wincry_theme = ["wincry", "ruslanchik", "wincry_warning", "revi_os"]
+    all_wincry_theme = ["wincry", "ruslanchik", "wincry_warning", "wincry_full_warning", "revi_os"]
     if current_theme in all_wincry_theme:
         icon_label = ttk.Label(
             title_frame, text="🚀", font=("Segoe UI", 32), foreground="#ff1744"
@@ -2087,7 +2087,7 @@ def switch_to_main():
     icon_label.pack(side="left", padx=(0, 10))
 
     username = getpass.getuser()
-    if current_theme == "ruslanchik" or current_theme == "wincry_warning" or current_theme == "revi_os":
+    if current_theme == "ruslanchik" or current_theme == "wincry_warning" or current_theme == "wincry_full_warning" or current_theme == "wincry_full_warning" or current_theme == "revi_os":
         foreground_for_title_frame = "#f0ad4e"
     else:
         foreground_for_title_frame = "#ffffff"
@@ -2112,7 +2112,7 @@ def switch_to_main():
         title.pack(side="left")
 
     # Добавляем описание программы
-    if current_theme == "ruslanchik" or current_theme == "wincry_warning" or current_theme == "revi_os":
+    if current_theme == "ruslanchik" or current_theme == "wincry_warning" or current_theme == "wincry_full_warning" or current_theme == "wincry_full_warning" or current_theme == "revi_os":
         foreground_for_description = "#f0ad4e"
     else:
         foreground_for_description = "#888888"
@@ -2153,7 +2153,7 @@ def switch_to_main():
         )
         btn.grid(row=i // 2, column=i % 2, padx=5, pady=5, sticky="ew")
     # Если тема wincry_warning, то меняем цвет кнопок на оранжевый
-    if current_theme == "wincry_warning":
+    if current_theme == "wincry_warning" or current_theme == "wincry_full_warning" or current_theme == "wincry_full_warning":
         for button in actions_frame.winfo_children():
             if isinstance(button, ttk.Button):
                 button.config(bootstyle="warning-outline")
@@ -2192,7 +2192,7 @@ def switch_to_main():
 
         # Создаем метки со статистикой
         stats = [uptime_str, ram_str, disk_str]
-        if current_theme == "ruslanchik" or current_theme == "wincry_warning" or current_theme == "revi_os":
+        if current_theme == "ruslanchik" or current_theme == "wincry_warning" or current_theme == "wincry_full_warning" or current_theme == "revi_os":
             for stat in stats:
                 ttk.Label(
                     stats_frame, text=stat, font=("Segoe UI", 10), foreground="#f0ad4e"
@@ -2225,7 +2225,7 @@ def switch_to_main():
         "• Проверяйте настройки файла подкачки",
         "• Отключайте встроенную рекламу и сбор данных",
     ]
-    if current_theme == "wincry_warning":
+    if current_theme == "wincry_warning" or current_theme == "wincry_full_warning":
         foreground_for_tips = "#f0ad4e"
     else:
         foreground_for_tips = "#888888"
